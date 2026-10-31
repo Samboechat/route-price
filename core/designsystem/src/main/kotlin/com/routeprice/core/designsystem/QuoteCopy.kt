@@ -1,5 +1,6 @@
 package com.routeprice.core.designsystem
 
+import com.routeprice.core.domain.model.DomainError
 import com.routeprice.core.domain.model.FuelType
 import com.routeprice.core.domain.model.LineKind
 import com.routeprice.core.domain.model.PriceLine
@@ -141,5 +142,18 @@ object QuoteCopy {
         RoundingRule.UP_TO_50_CENTS -> "Para cima, R$ 0,50"
         RoundingRule.UP_TO_1_REAL -> "Para cima, R$ 1"
         RoundingRule.UP_TO_5_REAIS -> "Para cima, R$ 5"
+    }
+
+    fun error(e: DomainError): String = when (e) {
+        DomainError.Offline -> "Sem conexão com a internet. Rotas e endereços precisam de internet; histórico e configurações funcionam offline."
+        DomainError.MissingApiKey -> "Mapas não configurados (MAPS_API_KEY). Informe distância e tempo manualmente ou configure a chave."
+        DomainError.RouteNotFound -> "Não encontramos uma rota de carro entre esses pontos."
+        DomainError.AddressNotFound -> "Endereço sem localização confirmada. Escolha uma sugestão da busca ou um ponto no mapa."
+        DomainError.LocationPermissionDenied -> "Permita o acesso à localização para usar sua posição atual."
+        DomainError.LocationUnavailable -> "Não foi possível obter sua localização agora. Verifique se o GPS está ligado."
+        DomainError.QuotaOrKeyRejected -> "A chave da Google Maps Platform foi recusada ou atingiu a cota. Verifique as restrições no Console."
+        is DomainError.Http -> "O serviço de mapas respondeu com erro (${e.code}). Tente novamente."
+        DomainError.Timeout -> "O serviço de mapas demorou a responder. Tente novamente."
+        DomainError.Unknown -> "Algo deu errado. Tente novamente."
     }
 }

@@ -60,3 +60,9 @@ interface ExternalServicesStatus {
     val isMapsConfigured: Boolean
     val isOnline: Flow<Boolean>
 }
+
+/** Exportação dos dados locais em formatos abertos. */
+interface DataExportService {
+    suspend fun exportJson(): String
+    suspend fun exportCsv(): String
+}

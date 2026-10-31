@@ -10,6 +10,7 @@ import com.routeprice.core.data.remote.GoogleApiHeadersInterceptor
 import com.routeprice.core.data.remote.MapsApiKeyProvider
 import com.routeprice.core.data.remote.PlacesApi
 import com.routeprice.core.data.remote.RoutesApi
+import com.routeprice.core.data.repository.DataExporter
 import com.routeprice.core.data.repository.DataStoreSettingsRepository
 import com.routeprice.core.data.repository.GooglePlacesRepository
 import com.routeprice.core.data.repository.GoogleRouteRepository
@@ -17,6 +18,7 @@ import com.routeprice.core.data.repository.RoomQuoteRepository
 import com.routeprice.core.data.repository.RoomVehicleRepository
 import com.routeprice.core.data.system.AndroidExternalServicesStatus
 import com.routeprice.core.data.system.FusedLocationRepository
+import com.routeprice.core.domain.repository.DataExportService
 import com.routeprice.core.domain.repository.ExternalServicesStatus
 import com.routeprice.core.domain.repository.LocationRepository
 import com.routeprice.core.domain.repository.PlacesRepository
@@ -50,6 +52,7 @@ abstract class DataBindings {
     @Binds abstract fun location(impl: FusedLocationRepository): LocationRepository
     @Binds abstract fun status(impl: AndroidExternalServicesStatus): ExternalServicesStatus
     @Binds abstract fun time(impl: SystemTimeProvider): TimeProvider
+    @Binds abstract fun export(impl: DataExporter): DataExportService
 }
 
 @Module

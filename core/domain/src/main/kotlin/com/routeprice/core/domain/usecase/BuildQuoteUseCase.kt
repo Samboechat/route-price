@@ -44,7 +44,28 @@ data class QuoteRequest(
     val status: QuoteStatus = QuoteStatus.DRAFT,
     /** Quando presente, recalcula um orçamento existente mantendo id e data de criação. */
     val existing: TripQuote? = null,
-)
+) {
+    companion object {
+        /** Reconstrói o pedido a partir de um orçamento salvo (para recalcular ou editar). */
+        fun from(quote: TripQuote, vehicle: Vehicle?): QuoteRequest = QuoteRequest(
+            origin = quote.origin,
+            destination = quote.destination,
+            stops = quote.stops,
+            route = quote.route,
+            vehicle = vehicle,
+            waitingMinutes = quote.input.waitingMinutes,
+            extraExpenses = quote.input.extraExpenses,
+            manualTolls = quote.input.tolls.takeIf { quote.input.tollsSource == ValueSource.DRIVER_INFORMED && it.isPositive },
+            deadheadKm = quote.input.deadheadKm,
+            deadheadMinutes = quote.input.deadheadMinutes,
+            passengerName = quote.passengerName,
+            notes = quote.notes,
+            negotiatedPrice = quote.negotiatedPrice,
+            status = quote.status,
+            existing = quote,
+        )
+    }
+}
 
 class BuildQuoteUseCase @Inject constructor(
     private val engine: PricingEngine,

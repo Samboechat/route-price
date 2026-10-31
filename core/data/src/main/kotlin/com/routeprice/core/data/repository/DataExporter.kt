@@ -5,6 +5,7 @@ import com.routeprice.core.domain.model.DriverProfile
 import com.routeprice.core.domain.model.PricingSettings
 import com.routeprice.core.domain.model.TripQuote
 import com.routeprice.core.domain.model.Vehicle
+import com.routeprice.core.domain.repository.DataExportService
 import com.routeprice.core.domain.repository.QuoteRepository
 import com.routeprice.core.domain.repository.SettingsRepository
 import com.routeprice.core.domain.repository.VehicleRepository
@@ -31,8 +32,8 @@ class DataExporter @Inject constructor(
     private val vehicles: VehicleRepository,
     private val settings: SettingsRepository,
     private val time: TimeProvider,
-) {
-    suspend fun exportJson(): String = AppJson.encodeToString(
+) : DataExportService {
+    override suspend fun exportJson(): String = AppJson.encodeToString(
         BackupFile.serializer(),
         BackupFile(
             exportedAtMillis = time.nowMillis(),
@@ -43,5 +44,5 @@ class DataExporter @Inject constructor(
         ),
     )
 
-    suspend fun exportCsv(): String = QuoteCsvExporter.export(quotes.all())
+    override suspend fun exportCsv(): String = QuoteCsvExporter.export(quotes.all())
 }
