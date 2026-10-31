@@ -212,8 +212,9 @@ private fun HeaderCard(quote: TripQuote, now: Long) {
         Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
             MetricTile("Distância", BrFormat.distance(quote.route.distanceMeters), Modifier.weight(1f), Icons.Outlined.Straighten)
             MetricTile("Tempo", BrFormat.duration(quote.route.durationSeconds), Modifier.weight(1f), Icons.Outlined.Schedule)
-            MetricTile("Pedágios", if (quote.input.tolls.isPositive) BrFormat.money(quote.input.tolls) else "—", Modifier.weight(1f), Icons.Outlined.Toll)
         }
+        Spacer(Modifier.height(Spacing.sm))
+        MetricTile("Pedágios", PassengerView.tollsText(quote), Modifier.fillMaxWidth(), Icons.Outlined.Toll)
         Spacer(Modifier.height(Spacing.sm))
         Text(QuoteCopy.routeSourceLabel(quote.route.source), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         quote.vehicle?.let { Text(

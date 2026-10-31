@@ -184,6 +184,8 @@ private fun MapSection(state: TripPlannerUiState, vm: TripPlannerViewModel) {
 
 @Composable
 private fun PointsCard(state: TripPlannerUiState, vm: TripPlannerViewModel) {
+    // Sem mapa (ou em modo manual) endereço sem coordenada é o esperado: não alarmar.
+    val warn = state.mapsConfigured && !state.manualRoute
     RpCard(Modifier.animateContentSize()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("Trajeto", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
@@ -191,7 +193,7 @@ private fun PointsCard(state: TripPlannerUiState, vm: TripPlannerViewModel) {
                 Icon(Icons.Outlined.SwapVert, contentDescription = "Inverter embarque e destino")
             }
         }
-        PointRow("A", "Embarque", state.origin, MaterialTheme.colorScheme.onSurface, "pointOrigin", { vm.openSearch(PointTarget.Origin) })
+        PointRow("A", "Embarque", state.origin, MaterialTheme.colorScheme.onSurface, "pointOrigin", { vm.openSearch(PointTarget.Origin) }, warn)
         state.stops.forEachIndexed { index, stop ->
             PointRow(
                 marker = (index + 1).toString(),
@@ -200,6 +202,7 @@ private fun PointsCard(state: TripPlannerUiState, vm: TripPlannerViewModel) {
                 color = MaterialTheme.colorScheme.outline,
                 tag = "pointStop$index",
                 onClick = { vm.openSearch(PointTarget.Stop(stop.id)) },
+                warnUnlocated = warn,
             ) {
                 IconButton(onClick = { vm.moveStop(stop.id, -1) }, enabled = index > 0) {
                     Icon(Icons.Outlined.KeyboardArrowUp, contentDescription = "Mover parada ${index + 1} para cima")
@@ -212,7 +215,7 @@ private fun PointsCard(state: TripPlannerUiState, vm: TripPlannerViewModel) {
                 }
             }
         }
-        PointRow("B", "Destino", state.destination, MaterialTheme.colorScheme.primary, "pointDestination", { vm.openSearch(PointTarget.Destination) })
+        PointRow("B", "Destino", state.destination, MaterialTheme.colorScheme.primary, "pointDestination", { vm.openSearch(PointTarget.Destination) }, warn)
         RpTextButton("Adicionar parada", vm::addStop, icon = Icons.Outlined.Add, modifier = Modifier.testTag("addStop"))
     }
 }
@@ -225,33 +228,38 @@ private fun PointRow(
     color: androidx.compose.ui.graphics.Color,
     tag: String,
     onClick: () -> Unit,
-    actions: @Composable () -> Unit = {},
+    warnUnlocated: Boolean = true,
+    actions: (@Composable () -> Unit)? = null,
 ) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .heightIn(min = 56.dp)
-            .clickable(role = Role.Button, onClick = onClick)
-            .semantics { contentDescription = "$kind: ${place?.displayText ?: "não definido"}" }
-            .testTag(tag),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        StopMarker(marker, color)
-        Spacer(Modifier.width(Spacing.md))
-        Column(Modifier.weight(1f)) {
-            Text(kind, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(
-                place?.displayText ?: "Toque para definir",
-                style = MaterialTheme.typography.bodyLarge,
-                color = if (place == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-            if (place != null && !place.isGeolocated) {
-                Text("Sem localização no mapa", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+    Column(Modifier.fillMaxWidth()) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .heightIn(min = 56.dp)
+                .clickable(role = Role.Button, onClick = onClick)
+                .semantics { contentDescription = "$kind: ${place?.displayText ?: "não definido"}" }
+                .testTag(tag),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            StopMarker(marker, color)
+            Spacer(Modifier.width(Spacing.md))
+            Column(Modifier.weight(1f)) {
+                Text(kind, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    place?.displayText ?: "Toque para definir",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = if (place == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                if (warnUnlocated && place != null && !place.isGeolocated) {
+                    Text("Sem localização no mapa: informe distância e tempo", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+                }
             }
         }
-        actions()
+        if (actions != null) {
+            Row(Modifier.fillMaxWidth().padding(start = 36.dp), horizontalArrangement = Arrangement.End) { actions() }
+        }
     }
 }
 
@@ -326,8 +334,8 @@ private fun RouteSection(state: TripPlannerUiState, vm: TripPlannerViewModel) {
                 Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     MetricTile("Distância", BrFormat.distance(selected.distanceMeters), Modifier.weight(1f), Icons.Outlined.Straighten)
                     MetricTile("Tempo", BrFormat.duration(selected.durationSeconds), Modifier.weight(1f), Icons.Outlined.Schedule)
-                    MetricTile("Pedágios", tollText(selected.tolls), Modifier.weight(1f), Icons.Outlined.Toll)
                 }
+                MetricTile("Pedágios", tollText(selected.tolls), Modifier.fillMaxWidth(), Icons.Outlined.Toll)
                 Text(
                     QuoteCopy.routeSourceLabel(selected.source) + ", na ordem das paradas escolhidas.",
                     style = MaterialTheme.typography.bodySmall,
@@ -340,7 +348,7 @@ private fun RouteSection(state: TripPlannerUiState, vm: TripPlannerViewModel) {
 
 internal fun tollText(t: TollInfo): String = when (t) {
     TollInfo.NotReported -> "—"
-    TollInfo.PriceUnknown -> "Valor ?"
+    TollInfo.PriceUnknown -> "Há pedágio, valor não informado"
     is TollInfo.Estimated -> BrFormat.money(t.amount)
 }
 
