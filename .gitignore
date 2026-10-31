@@ -1,0 +1,30 @@
+# Gradle / build
+.gradle/
+build/
+**/build/
+.kotlin/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+.vscode/
+
+# Configuração local e segredos — nunca versionar
+local.properties
+secrets.properties
+.env
+*.env
+!.env.example
+*.jks
+*.keystore
+keystore.properties
+google-services.json
+
+# Saídas
+*.apk
+*.aab
+output-metadata.json
