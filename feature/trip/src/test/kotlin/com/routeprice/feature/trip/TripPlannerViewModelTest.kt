@@ -259,5 +259,19 @@ class TripPlannerViewModelTest {
         assertEquals("Rua X", vm.state.value.origin!!.label)
         assertNull(vm.state.value.pickingOnMap)
     }
-}
 
+    @Test
+    fun `modo manual com parada calcula e salva`() = runTest(dispatcher) {
+        coEvery { quotes.upsert(any()) } returns Unit
+        val vm = vm(mapsConfigured = false)
+        vm.openSearch(PointTarget.Origin); vm.onQueryChange("Rua das Flores, 100"); vm.useTypedText()
+        vm.addStop(); vm.onQueryChange("Shopping Central"); vm.useTypedText()
+        vm.openSearch(PointTarget.Destination); vm.onQueryChange("Avenida Brasil, 2000"); vm.useTypedText()
+        vm.updateExtras { it.copy(manualDistanceKm = "18,4", manualDurationMinutes = "32") }
+        advanceUntilIdle()
+        assertTrue(vm.state.value.canCalculate)
+        vm.calculate()
+        advanceUntilIdle()
+        coVerify(exactly = 1) { quotes.upsert(any()) }
+    }
+}

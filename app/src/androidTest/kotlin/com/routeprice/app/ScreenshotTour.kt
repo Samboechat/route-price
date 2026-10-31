@@ -11,6 +11,7 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.printToString
 import androidx.compose.ui.test.captureToImage
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -75,7 +76,16 @@ class ScreenshotTour {
         shot("02-nova-viagem")
 
         rule.onNodeWithTag("calculate").performClick()
-        rule.waitUntil(20_000) { rule.onAllNodes(hasTestTag("suggestedPrice")).fetchSemanticsNodes().isNotEmpty() }
+        try {
+            rule.waitUntil(20_000) { rule.onAllNodes(hasTestTag("suggestedPrice")).fetchSemanticsNodes().isNotEmpty() }
+        } catch (e: androidx.compose.ui.test.ComposeTimeoutException) {
+            // Diagnóstico: captura e árvore de semântica do estado em que a tela ficou.
+            shot("erro-apos-calcular")
+            TestStorage().openOutputFile("screenshots/erro-arvore.txt").use {
+                it.write(rule.onRoot(useUnmergedTree = true).printToString(maxDepth = 60).toByteArray())
+            }
+            throw e
+        }
         shot("03-orcamento")
         rule.onNodeWithTag("quote").performScrollToNode(hasText("Composição do preço"))
         shot("04-orcamento-composicao")
