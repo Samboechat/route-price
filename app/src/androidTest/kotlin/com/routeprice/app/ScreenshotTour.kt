@@ -77,7 +77,8 @@ class ScreenshotTour {
 
         rule.onNodeWithTag("calculate").performClick()
         try {
-            rule.waitUntil(20_000) { rule.onAllNodes(hasTestTag("suggestedPrice")).fetchSemanticsNodes().isNotEmpty() }
+            rule.waitUntil(20_000) { rule.onAllNodes(hasTestTag("quote")).fetchSemanticsNodes().isNotEmpty() }
+        rule.onNodeWithTag("quote").performScrollToNode(hasTestTag("suggestedPrice"))
         } catch (e: androidx.compose.ui.test.ComposeTimeoutException) {
             // Diagnóstico: captura e árvore de semântica do estado em que a tela ficou.
             shot("erro-apos-calcular")

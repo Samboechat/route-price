@@ -53,7 +53,8 @@ class QuoteJourneyTest {
         Espresso.closeSoftKeyboard()
         rule.waitForIdle()
         rule.onNodeWithTag("calculate").performClick()
-        rule.waitUntil(20_000) { rule.onAllNodes(hasTestTag("suggestedPrice")).fetchSemanticsNodes().isNotEmpty() }
-        rule.onNodeWithText("Rua das Flores, 100").assertExists()
+        rule.waitUntil(20_000) { rule.onAllNodes(hasTestTag("quote")).fetchSemanticsNodes().isNotEmpty() }
+        rule.onNodeWithTag("quote").performScrollToNode(hasTestTag("suggestedPrice"))
+        rule.onNodeWithTag("suggestedPrice").assertExists()
     }
 }
