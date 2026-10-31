@@ -33,9 +33,10 @@
 
 ## Situação na entrega
 
-- 69 testes unitários passando (domain 36, data 10, trip 10, quote 8, settings 3, home 2).
+- 70 testes unitários passando (domain 36, data 10, trip 11, quote 8, settings 3, home 2).
 - Detekt e Android Lint sem erros.
 - `assembleDebug` e `assembleRelease` (R8) gerados localmente.
-- Os testes instrumentados compilam; a execução ocorre no workflow **Testes instrumentados** (emulador API 34).
+- 4 testes instrumentados passando no emulador API 34 do GitHub Actions (Room, tela do passageiro, jornada completa e tour de capturas).
+- O tour salva capturas das telas principais no artifact `capturas-de-tela` para revisão visual.
 - A geração de PDF/imagem usa APIs gráficas do Android e é exercitada manualmente e pelo fluxo de compartilhamento;
   ainda não há teste automatizado que abra o PDF gerado.

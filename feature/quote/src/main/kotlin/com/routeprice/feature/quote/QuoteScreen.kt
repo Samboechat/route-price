@@ -239,17 +239,16 @@ private fun PricesCard(quote: TripQuote, state: QuoteUiState, vm: QuoteViewModel
                 caption = if (negotiation.hasAdjustment) "Negociado" else "Igual ao sugerido")
         }
         Spacer(Modifier.height(Spacing.md))
-        Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-            RpNumberField(
-                state.negotiatedText,
-                vm::onNegotiatedChange,
-                "Preço combinado (opcional)",
-                Modifier.weight(1f).testTag("negotiatedField"),
-                prefix = "R$ ",
-                errorText = state.negotiatedError,
-            )
-            RpSecondaryButton("Aplicar", vm::applyNegotiated, Modifier.padding(top = 6.dp))
-        }
+        RpNumberField(
+            state.negotiatedText,
+            vm::onNegotiatedChange,
+            "Preço combinado (opcional)",
+            Modifier.testTag("negotiatedField"),
+            prefix = "R$ ",
+            errorText = state.negotiatedError,
+        )
+        Spacer(Modifier.height(Spacing.sm))
+        RpSecondaryButton("Aplicar preço combinado", vm::applyNegotiated, Modifier.fillMaxWidth())
         if (negotiation.hasAdjustment) {
             val color = if (negotiation.difference.cents < 0) RpTheme.extended.negative else RpTheme.extended.positive
             val pct = negotiation.differencePercent?.let { " (${BrFormat.percent(it)})" }.orEmpty()
