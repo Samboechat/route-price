@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Compilação, lint, Detekt e testes
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/develop' && github.ref != 'refs/heads/main' }}
+
+      - name: Validar Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Procurar segredos acidentais
+        run: |
+          if git ls-files | grep -E '\.(jks|keystore)$|(^|/)secrets\.properties$|(^|/)local\.properties$|google-services\.json$'; then
+            echo "::error::Arquivo sensível versionado"; exit 1
+          fi
+          if git grep -nE 'AIza[0-9A-Za-z_-]{35}' -- . ':!*.md'; then
+            echo "::error::Possível chave do Google no código"; exit 1
+          fi
+
+      - name: Compilar (Kotlin)
+        run: ./gradlew compileDebugKotlin compileDebugUnitTestKotlin compileDebugAndroidTestKotlin :core:domain:compileTestKotlin
+
+      - name: Detekt
+        run: ./gradlew detekt
+
+      - name: Android Lint
+        run: ./gradlew lintDebug
+
+      - name: Testes unitários
+        run: ./gradlew :core:domain:test testDebugUnitTest
+
+      - name: Relatórios
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorios-ci
+          path: |
+            **/build/reports/tests/
+            **/build/test-results/
+            **/build/reports/lint-results-*.html
+            build/reports/detekt/
+          if-no-files-found: ignore
+
+  dependency-review:
+    name: Revisão de dependências
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
