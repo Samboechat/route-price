@@ -56,3 +56,10 @@ jobs:
           name: relatorios-instrumentados
           path: '**/build/reports/androidTests/'
           if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: capturas-de-tela
+          path: app/build/outputs/connected_android_test_additional_output/
+          if-no-files-found: ignore

@@ -18,12 +18,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Chat
+import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.PictureAsPdf
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material.icons.outlined.ShortText
+import androidx.compose.material.icons.automirrored.outlined.ShortText
 import androidx.compose.material.icons.outlined.Straighten
 import androidx.compose.material.icons.outlined.Toll
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -121,7 +121,7 @@ internal fun PassengerQuoteScreen(state: QuoteUiState, onBack: () -> Unit, onSha
         val quote = state.quote
         when {
             state.loading -> LoadingState("Carregando", Modifier.padding(padding).padding(Spacing.screen))
-            quote == null -> EmptyState(Icons.Outlined.ShortText, "Orçamento não encontrado", "Ele pode ter sido excluído.", Modifier.padding(padding))
+            quote == null -> EmptyState(Icons.AutoMirrored.Outlined.ShortText, "Orçamento não encontrado", "Ele pode ter sido excluído.", Modifier.padding(padding))
             else -> PassengerQuoteContent(quote, state.nowMillis, Modifier.padding(padding))
         }
     }
@@ -226,10 +226,10 @@ internal fun ShareOptionsSheet(onDismiss: () -> Unit, onSelect: (ShareFormat) ->
         Column(Modifier.padding(horizontal = Spacing.screen).padding(bottom = Spacing.xl)) {
             Text("Enviar orçamento", style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.height(Spacing.sm))
-            ShareOption(Icons.Outlined.Chat, "WhatsApp", "Imagem do orçamento com o resumo em texto") { onSelect(ShareFormat.WHATSAPP) }
+            ShareOption(Icons.AutoMirrored.Outlined.Chat, "WhatsApp", "Imagem do orçamento com o resumo em texto") { onSelect(ShareFormat.WHATSAPP) }
             ShareOption(Icons.Outlined.PictureAsPdf, "PDF", "Documento completo para enviar ou imprimir") { onSelect(ShareFormat.PDF) }
             ShareOption(Icons.Outlined.Image, "Imagem", "PNG em alta resolução") { onSelect(ShareFormat.IMAGE) }
-            ShareOption(Icons.Outlined.ShortText, "Texto", "Resumo simples para qualquer app") { onSelect(ShareFormat.TEXT) }
+            ShareOption(Icons.AutoMirrored.Outlined.ShortText, "Texto", "Resumo simples para qualquer app") { onSelect(ShareFormat.TEXT) }
         }
     }
 }

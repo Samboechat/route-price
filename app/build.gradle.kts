@@ -33,6 +33,8 @@ android {
         versionName = "0.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // Capturas de tela dos testes vão para build/outputs/connected_android_test_additional_output.
+        testInstrumentationRunnerArguments["useTestStorageService"] = "true"
         manifestPlaceholders["mapsApiKey"] = mapsApiKey
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
     }
@@ -91,7 +93,6 @@ android {
         warningsAsErrors = false
         checkDependencies = true
         disable += setOf("GradleDependency", "NewerVersionAvailable", "AndroidGradlePluginVersion")
-        sarifReport = true
     }
 
     packaging {
@@ -124,5 +125,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.test.storage)
+    androidTestUtil(libs.androidx.test.services)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

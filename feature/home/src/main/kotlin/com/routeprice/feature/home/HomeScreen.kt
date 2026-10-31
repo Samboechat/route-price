@@ -18,7 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.AddRoad
 import androidx.compose.material.icons.outlined.History
-import androidx.compose.material.icons.outlined.ReceiptLong
+import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -159,7 +159,7 @@ fun HomeScreen(state: HomeUiState, navigation: HomeNavigation, onCreateDemo: () 
         } else if (state.recentQuotes.isEmpty() && state.recentTrips.isEmpty()) {
             item {
                 EmptyState(
-                    icon = Icons.Outlined.ReceiptLong,
+                    icon = Icons.AutoMirrored.Outlined.ReceiptLong,
                     title = "Nenhum orçamento ainda",
                     message = "Seus orçamentos e viagens aparecem aqui. Quer ver como o passageiro recebe a proposta?",
                     actionLabel = "Ver orçamento de exemplo",

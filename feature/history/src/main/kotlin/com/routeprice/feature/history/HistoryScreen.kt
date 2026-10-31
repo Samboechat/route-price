@@ -14,7 +14,7 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.ReceiptLong
+import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.SearchOff
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -124,7 +124,7 @@ internal fun HistoryScreen(
                     EmptyState(Icons.Outlined.SearchOff, "Nada encontrado", "Tente outro termo ou remova o filtro.")
                 }
                 state.quotes.isEmpty() -> item {
-                    EmptyState(Icons.Outlined.ReceiptLong, "Histórico vazio", "Os orçamentos que você criar ficam salvos aqui, mesmo offline.",
+                    EmptyState(Icons.AutoMirrored.Outlined.ReceiptLong, "Histórico vazio", "Os orçamentos que você criar ficam salvos aqui, mesmo offline.",
                         actionLabel = "Nova viagem", onAction = onNewTrip)
                 }
                 else -> items(state.quotes, key = { it.id }) { quote ->
