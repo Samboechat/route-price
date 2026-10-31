@@ -12,6 +12,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.captureToImage
+import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.services.storage.TestStorage
 import org.junit.Assume.assumeTrue
@@ -69,10 +70,12 @@ class ScreenshotTour {
         reveal("manualDistance")
         rule.onNodeWithTag("manualDistance").performTextInput("18,4")
         rule.onNodeWithTag("manualDuration").performTextInput("32")
+        Espresso.closeSoftKeyboard()
+        rule.waitForIdle()
         shot("02-nova-viagem")
 
         rule.onNodeWithTag("calculate").performClick()
-        waitTag("suggestedPrice")
+        rule.waitUntil(20_000) { rule.onAllNodes(hasTestTag("suggestedPrice")).fetchSemanticsNodes().isNotEmpty() }
         shot("03-orcamento")
         rule.onNodeWithTag("quote").performScrollToNode(hasText("Composição do preço"))
         shot("04-orcamento-composicao")

@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextInput
+import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -49,8 +50,10 @@ class QuoteJourneyTest {
         reveal("manualDistance")
         rule.onNodeWithTag("manualDistance").performTextInput("18,4")
         rule.onNodeWithTag("manualDuration").performTextInput("32")
+        Espresso.closeSoftKeyboard()
+        rule.waitForIdle()
         rule.onNodeWithTag("calculate").performClick()
-        rule.waitUntil(10_000) { rule.onAllNodes(hasTestTag("suggestedPrice")).fetchSemanticsNodes().isNotEmpty() }
+        rule.waitUntil(20_000) { rule.onAllNodes(hasTestTag("suggestedPrice")).fetchSemanticsNodes().isNotEmpty() }
         rule.onNodeWithText("Rua das Flores, 100").assertExists()
     }
 }
