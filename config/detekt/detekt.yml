@@ -1,0 +1,60 @@
+# Ajustes sobre a configuração padrão do Detekt (buildUponDefaultConfig = true).
+complexity:
+  LongParameterList:
+    functionThreshold: 10
+    constructorThreshold: 10
+    ignoreDefaultParameters: true
+    ignoreAnnotated: ['Composable']
+  LongMethod:
+    threshold: 120
+    ignoreAnnotated: ['Composable']
+  TooManyFunctions:
+    thresholdInClasses: 30
+    thresholdInFiles: 40
+    thresholdInObjects: 20
+  ComplexCondition:
+    threshold: 6
+  CyclomaticComplexMethod:
+    threshold: 18
+    ignoreAnnotated: ['Composable']
+  NestedBlockDepth:
+    threshold: 5
+
+naming:
+  # Arquivos de tela também declaram a rota tipada da tela (padrão do projeto).
+  MatchingDeclarationName:
+    active: false
+  FunctionNaming:
+    ignoreAnnotated: ['Composable', 'Test']
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Z][_A-Z0-9]*'
+
+style:
+  MagicNumber:
+    ignoreAnnotated: ['Composable']
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreNamedArgument: true
+    ignoreRanges: true
+    # Modelos (valores padrão documentados), formatação e mapeamentos de API usam números autoexplicativos.
+    excludes: ['**/test/**', '**/androidTest/**', '**/designsystem/**', '**/model/**', '**/BrFormat.kt', '**/RouteMapper.kt',
+      '**/QuoteDocumentRenderer.kt', '**/PricingSettingsViewModel.kt', '**/*Screen*.kt', '**/TripMap.kt']
+  MaxLineLength:
+    maxLineLength: 180
+    excludes: ['**/test/**']
+  ReturnCount:
+    max: 5
+  UnusedPrivateMember:
+    ignoreAnnotated: ['Preview']
+  WildcardImport:
+    active: true
+  ForbiddenComment:
+    active: false
+  UseCheckOrError:
+    active: true
+
+exceptions:
+  TooGenericExceptionCaught:
+    active: true
+  SwallowedException:
+    ignoredExceptionTypes: ['IOException', 'IllegalArgumentException', 'ActivityNotFoundException', 'InterruptedException']

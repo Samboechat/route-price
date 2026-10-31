@@ -40,6 +40,9 @@ import java.math.BigDecimal
 import java.util.UUID
 import javax.inject.Inject
 
+private const val METERS_TO_KM_SCALE = 3
+private const val SECONDS_IN_MINUTE = 60
+
 sealed interface PointTarget {
     data object Origin : PointTarget
     data object Destination : PointTarget
@@ -104,8 +107,8 @@ data class TripPlannerUiState(
                 null
             } else {
                 RouteSummary(
-                    distanceMeters = km.movePointRight(3).toLong(),
-                    durationSeconds = minutes.multiply(BigDecimal(60)).toLong(),
+                    distanceMeters = km.movePointRight(METERS_TO_KM_SCALE).toLong(),
+                    durationSeconds = minutes.multiply(BigDecimal(SECONDS_IN_MINUTE)).toLong(),
                     source = ValueSource.DRIVER_INFORMED,
                 )
             }
@@ -182,7 +185,7 @@ class TripPlannerViewModel @Inject constructor(
                     deadheadKm = quote.input.deadheadKm.takeIf { k -> k > BigDecimal.ZERO }?.let { k -> BrFormat.decimal(k, 1) }.orEmpty(),
                     deadheadMinutes = quote.input.deadheadMinutes.takeIf { m -> m > 0 }?.toString().orEmpty(),
                     passengerName = quote.passengerName,
-                    manualDistanceKm = if (manual) BrFormat.decimal(BigDecimal(quote.route.distanceMeters).movePointLeft(3), 1) else "",
+                    manualDistanceKm = if (manual) BrFormat.decimal(BigDecimal(quote.route.distanceMeters).movePointLeft(METERS_TO_KM_SCALE), 1) else "",
                     manualDurationMinutes = if (manual) (quote.route.durationSeconds / SECONDS_PER_MINUTE).toString() else "",
                 ),
             )

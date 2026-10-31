@@ -124,7 +124,7 @@ private fun SettingsScaffold(
             CenterAlignedTopAppBar(
                 title = { Text(title) },
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "Voltar") } },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
             )
         },
         snackbarHost = { snackbar?.let { SnackbarHost(it) } },
@@ -192,7 +192,11 @@ private fun SettingsHomeScreen(onBack: () -> Unit, onOpen: (Any) -> Unit) {
         item {
             RpCard {
                 NavRow(Icons.Outlined.Person, "Perfil do motorista", state.driver.name.ifBlank { "Nome e telefone no orçamento" }) { onOpen(DriverProfileRoute) }
-                NavRow(Icons.Outlined.DirectionsCar, "Veículos", if (state.vehicleCount == 0) "Nenhum cadastrado" else "${state.vehicleCount} cadastrado(s)") { onOpen(VehiclesRoute) }
+                NavRow(
+                    Icons.Outlined.DirectionsCar,
+                    "Veículos",
+                    if (state.vehicleCount == 0) "Nenhum cadastrado" else "${state.vehicleCount} cadastrado(s)",
+                ) { onOpen(VehiclesRoute) }
                 NavRow(
                     Icons.Outlined.Payments,
                     "Preços e custos",
@@ -266,7 +270,13 @@ private fun DriverProfileScreen(onBack: () -> Unit) {
     val f by vm.form.collectAsStateWithLifecycle()
     LaunchedEffect(vm) { vm.saved.collect { onBack() } }
     SettingsScaffold("Perfil do motorista", onBack, bottomBar = { SaveBar("Salvar perfil", vm::save) }) {
-        item { Text("Estas informações aparecem no orçamento enviado ao passageiro.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+        item {
+            Text(
+                "Estas informações aparecem no orçamento enviado ao passageiro.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         item { RpTextField(f.name, { v -> vm.update { it.copy(name = v) } }, "Nome") }
         item { RpTextField(f.phone, { v -> vm.update { it.copy(phone = v) } }, "Telefone / WhatsApp", keyboardType = KeyboardType.Phone) }
         item { RpTextField(f.city, { v -> vm.update { it.copy(city = v) } }, "Cidade de atuação") }
@@ -295,7 +305,11 @@ private fun VehiclesScreen(onBack: () -> Unit, onEdit: (String?) -> Unit) {
                     Column(Modifier.weight(1f)) {
                         Text(v.name, style = MaterialTheme.typography.titleMedium)
                         Text(
-                            "${QuoteCopy.vehicleType(v.type)} · ${QuoteCopy.fuel(v.fuelType)} · ${BrFormat.decimal(v.consumptionKmPerUnit, 1)} ${QuoteCopy.consumptionUnit(v.fuelType)}",
+                            listOf(
+                                QuoteCopy.vehicleType(v.type),
+                                QuoteCopy.fuel(v.fuelType),
+                                "${BrFormat.decimal(v.consumptionKmPerUnit, 1)} ${QuoteCopy.consumptionUnit(v.fuelType)}",
+                            ).joinToString(" · "),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -318,7 +332,9 @@ private fun VehicleEditScreen(onBack: () -> Unit) {
     var confirmDelete by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(vm) { vm.done.collect { onBack() } }
     SettingsScaffold(if (vm.isEditing) "Editar veículo" else "Novo veículo", onBack, bottomBar = { SaveBar("Salvar veículo", vm::save) }) {
-        item { RpTextField(f.name, { v -> vm.update { it.copy(name = v) } }, "Nome (ex.: Corolla prata)", errorText = f.errors["name"], modifier = Modifier.testTag("vehicleName")) }
+        item {
+            RpTextField(f.name, { v -> vm.update { it.copy(name = v) } }, "Nome (ex.: Corolla prata)", errorText = f.errors["name"], modifier = Modifier.testTag("vehicleName"))
+        }
         item {
             SectionHeader("Tipo")
             ChipRow(VehicleType.entries, f.type, QuoteCopy::vehicleType) { t -> vm.update { it.copy(type = t) } }
@@ -339,7 +355,14 @@ private fun VehicleEditScreen(onBack: () -> Unit) {
         }
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                RpNumberField(f.maintenancePerKm, { v -> vm.update { it.copy(maintenancePerKm = v) } }, "Manutenção por km", Modifier.weight(1f), prefix = "R$ ", errorText = f.errors["maintenance"])
+                RpNumberField(
+                    f.maintenancePerKm,
+                    { v -> vm.update { it.copy(maintenancePerKm = v) } },
+                    "Manutenção por km",
+                    Modifier.weight(1f),
+                    prefix = "R$ ",
+                    errorText = f.errors["maintenance"],
+                )
                 RpNumberField(f.wearPerKm, { v -> vm.update { it.copy(wearPerKm = v) } }, "Desgaste por km", Modifier.weight(1f), prefix = "R$ ", errorText = f.errors["wear"])
             }
             Text("Manutenção: revisões, óleo, peças. Desgaste: pneus e depreciação. Divida o gasto anual pelos km rodados no ano.",
@@ -388,7 +411,10 @@ private fun PricingSettingsScreen(onBack: () -> Unit) {
                     val sel = f.model == m
                     Column(
                         Modifier.weight(1f)
-                            .border(BorderStroke(if (sel) 2.dp else 1.dp, if (sel) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant), MaterialTheme.shapes.medium)
+                            .border(
+                                BorderStroke(if (sel) 2.dp else 1.dp, if (sel) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
+                                MaterialTheme.shapes.medium,
+                            )
                             .clickable(role = Role.RadioButton) { vm.update { it.copy(model = m) } }
                             .padding(Spacing.md),
                     ) {
@@ -417,20 +443,56 @@ private fun PricingSettingsScreen(onBack: () -> Unit) {
         item { SectionHeader("Tarifa comercial (modelo A)") }
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                RpNumberField(f.ratePerKm, { v -> vm.update { it.copy(ratePerKm = v) } }, "Por km", Modifier.weight(1f).testTag("ratePerKm"), prefix = "R$ ", errorText = f.errors["ratePerKm"])
-                RpNumberField(f.ratePerMinute, { v -> vm.update { it.copy(ratePerMinute = v) } }, "Por minuto", Modifier.weight(1f), prefix = "R$ ", errorText = f.errors["ratePerMinute"])
+                RpNumberField(
+                    f.ratePerKm,
+                    { v -> vm.update { it.copy(ratePerKm = v) } },
+                    "Por km",
+                    Modifier.weight(1f).testTag("ratePerKm"),
+                    prefix = "R$ ",
+                    errorText = f.errors["ratePerKm"],
+                )
+                RpNumberField(
+                    f.ratePerMinute,
+                    { v -> vm.update { it.copy(ratePerMinute = v) } },
+                    "Por minuto",
+                    Modifier.weight(1f),
+                    prefix = "R$ ",
+                    errorText = f.errors["ratePerMinute"],
+                )
             }
         }
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                 RpNumberField(f.stopFee, { v -> vm.update { it.copy(stopFee = v) } }, "Por parada", Modifier.weight(1f), prefix = "R$ ", errorText = f.errors["stopFee"])
-                RpNumberField(f.minimumFare, { v -> vm.update { it.copy(minimumFare = v) } }, "Tarifa mínima", Modifier.weight(1f), prefix = "R$ ", errorText = f.errors["minimumFare"])
+                RpNumberField(
+                    f.minimumFare,
+                    { v -> vm.update { it.copy(minimumFare = v) } },
+                    "Tarifa mínima",
+                    Modifier.weight(1f),
+                    prefix = "R$ ",
+                    errorText = f.errors["minimumFare"],
+                )
             }
         }
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                RpNumberField(f.waitingRate, { v -> vm.update { it.copy(waitingRate = v) } }, "Espera por minuto", Modifier.weight(1f), prefix = "R$ ", errorText = f.errors["waitingRate"])
-                RpNumberField(f.freeWaiting, { v -> vm.update { it.copy(freeWaiting = v) } }, "Espera grátis", Modifier.weight(1f), suffix = "min", decimal = false, errorText = f.errors["freeWaiting"])
+                RpNumberField(
+                    f.waitingRate,
+                    { v -> vm.update { it.copy(waitingRate = v) } },
+                    "Espera por minuto",
+                    Modifier.weight(1f),
+                    prefix = "R$ ",
+                    errorText = f.errors["waitingRate"],
+                )
+                RpNumberField(
+                    f.freeWaiting,
+                    { v -> vm.update { it.copy(freeWaiting = v) } },
+                    "Espera grátis",
+                    Modifier.weight(1f),
+                    suffix = "min",
+                    decimal = false,
+                    errorText = f.errors["freeWaiting"],
+                )
             }
         }
         item {
@@ -460,7 +522,14 @@ private fun PricingSettingsScreen(onBack: () -> Unit) {
         }
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                RpNumberField(f.hourlyRate, { v -> vm.update { it.copy(hourlyRate = v) } }, "Valor da sua hora", Modifier.weight(1f), prefix = "R$ ", errorText = f.errors["hourlyRate"])
+                RpNumberField(
+                    f.hourlyRate,
+                    { v -> vm.update { it.copy(hourlyRate = v) } },
+                    "Valor da sua hora",
+                    Modifier.weight(1f),
+                    prefix = "R$ ",
+                    errorText = f.errors["hourlyRate"],
+                )
                 RpNumberField(f.margin, { v -> vm.update { it.copy(margin = v) } }, "Margem de lucro", Modifier.weight(1f), suffix = "%", errorText = f.errors["margin"])
             }
         }
@@ -469,7 +538,14 @@ private fun PricingSettingsScreen(onBack: () -> Unit) {
             ChipRow(RoundingRule.entries, f.rounding, QuoteCopy::rounding) { r -> vm.update { it.copy(rounding = r) } }
         }
         item {
-            RpNumberField(f.validityHours, { v -> vm.update { it.copy(validityHours = v) } }, "Validade da proposta", suffix = "horas", decimal = false, errorText = f.errors["validity"])
+            RpNumberField(
+                f.validityHours,
+                { v -> vm.update { it.copy(validityHours = v) } },
+                "Validade da proposta",
+                suffix = "horas",
+                decimal = false,
+                errorText = f.errors["validity"],
+            )
         }
         item { Spacer(Modifier.height(Spacing.xl)) }
     }

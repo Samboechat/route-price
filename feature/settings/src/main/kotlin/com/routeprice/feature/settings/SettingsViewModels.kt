@@ -236,4 +236,6 @@ class VehicleEditViewModel @Inject constructor(
     }
 }
 
-internal fun BigDecimal.display(): String = if (signum() == 0) "" else BrFormat.decimal(this, 4)
+private const val FORM_DECIMALS = 4
+
+internal fun BigDecimal.display(): String = if (signum() == 0) "" else BrFormat.decimal(this, FORM_DECIMALS)

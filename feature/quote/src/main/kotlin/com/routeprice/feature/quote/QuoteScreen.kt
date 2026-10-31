@@ -142,7 +142,7 @@ internal fun QuoteScreen(state: QuoteUiState, vm: QuoteViewModel, navigation: Qu
                             onClick = { menu = false; confirmDelete = true })
                     }
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
             )
         },
         snackbarHost = { SnackbarHost(snackbar) },
@@ -216,7 +216,11 @@ private fun HeaderCard(quote: TripQuote, now: Long) {
         }
         Spacer(Modifier.height(Spacing.sm))
         Text(QuoteCopy.routeSourceLabel(quote.route.source), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        quote.vehicle?.let { Text("Veículo: ${it.name} · ${QuoteCopy.vehicleType(it.type)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+        quote.vehicle?.let { Text(
+            "Veículo: ${it.name} · ${QuoteCopy.vehicleType(it.type)}",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        ) }
     }
 }
 

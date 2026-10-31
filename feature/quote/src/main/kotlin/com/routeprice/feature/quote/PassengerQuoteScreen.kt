@@ -100,7 +100,7 @@ internal fun PassengerQuoteScreen(state: QuoteUiState, onBack: () -> Unit, onSha
             CenterAlignedTopAppBar(
                 title = { Text("Visão do passageiro") },
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "Voltar") } },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
             )
         },
         bottomBar = {

@@ -14,6 +14,8 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.withTranslation
 import com.routeprice.core.designsystem.Brand
 import com.routeprice.core.designsystem.QuoteCopy
 import com.routeprice.core.designsystem.component.SketchProjection
@@ -49,7 +51,7 @@ class QuoteDocumentRenderer(context: Context) {
     fun renderBitmap(quote: TripQuote, widthPx: Int = IMAGE_WIDTH_PX): Bitmap {
         val picture = record(quote)
         val scale = widthPx / WIDTH
-        val bitmap = Bitmap.createBitmap(widthPx, (picture.height * scale).toInt(), Bitmap.Config.ARGB_8888)
+        val bitmap = createBitmap(widthPx, (picture.height * scale).toInt())
         val canvas = Canvas(bitmap)
         canvas.scale(scale, scale)
         canvas.drawPicture(picture)
@@ -250,10 +252,7 @@ class QuoteDocumentRenderer(context: Context) {
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
             .setLineSpacing(0f, 1.15f)
             .build()
-        c.save()
-        c.translate(x, y)
-        layout.draw(c)
-        c.restore()
+        c.withTranslation(x, y) { layout.draw(this) }
         return layout.height.toFloat()
     }
 

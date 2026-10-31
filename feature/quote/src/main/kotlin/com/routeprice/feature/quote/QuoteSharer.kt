@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import com.routeprice.core.domain.model.TripQuote
 import com.routeprice.core.domain.util.BrFormat
 import dagger.Binds
@@ -86,7 +87,7 @@ object ShareLauncher {
             type = payload.mimeType
             putExtra(Intent.EXTRA_TEXT, payload.text)
             payload.fileUri?.let {
-                putExtra(Intent.EXTRA_STREAM, Uri.parse(it))
+                putExtra(Intent.EXTRA_STREAM, it.toUri())
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
         }

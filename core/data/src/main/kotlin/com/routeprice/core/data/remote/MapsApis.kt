@@ -1,9 +1,7 @@
 package com.routeprice.core.data.remote
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
 import okhttp3.Interceptor
 import okhttp3.Response
 import retrofit2.http.Body
@@ -71,16 +69,10 @@ class GoogleApiHeadersInterceptor(
     }
 
     companion object {
-        @SuppressLint("PackageManagerGetSignatures")
-        @Suppress("DEPRECATION")
         fun signingCertSha1(context: Context): String? = runCatching {
             val pm = context.packageManager
-            val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                pm.getPackageInfo(context.packageName, PackageManager.GET_SIGNING_CERTIFICATES)
-                    .signingInfo?.apkContentsSigners
-            } else {
-                pm.getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES).signatures
-            }
+            val signatures = pm.getPackageInfo(context.packageName, PackageManager.GET_SIGNING_CERTIFICATES)
+                .signingInfo?.apkContentsSigners
             val cert = signatures?.firstOrNull()?.toByteArray() ?: return null
             MessageDigest.getInstance("SHA-1").digest(cert).joinToString("") { "%02X".format(it) }
         }.getOrNull()

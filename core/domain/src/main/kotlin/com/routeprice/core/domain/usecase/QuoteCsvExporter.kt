@@ -22,7 +22,7 @@ object QuoteCsvExporter {
                 q.origin.displayText,
                 q.stops.joinToString(" | ") { it.displayText },
                 q.destination.displayText,
-                BrFormat.decimal(q.route.distanceMeters.toBigDecimal().movePointLeft(3), 2),
+                BrFormat.decimal(q.route.distanceMeters.toBigDecimal().movePointLeft(METERS_TO_KM_SCALE), 2),
                 (q.route.durationSeconds / SECONDS_PER_MINUTE).toString(),
                 BrFormat.decimal(q.input.tolls.toBigDecimal()),
                 q.result.selectedModel.name,
@@ -41,4 +41,5 @@ object QuoteCsvExporter {
     }
 
     private const val SECONDS_PER_MINUTE = 60
+    private const val METERS_TO_KM_SCALE = 3
 }

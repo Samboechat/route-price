@@ -87,7 +87,7 @@ class FusedLocationRepository @Inject constructor(@ApplicationContext private va
                 ?: AppResult.Failure(DomainError.LocationUnavailable)
         } catch (e: CancellationException) {
             throw e
-        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+        } catch (@Suppress("TooGenericExceptionCaught", "SwallowedException") e: Exception) {
             AppResult.Failure(DomainError.LocationUnavailable)
         }
     }

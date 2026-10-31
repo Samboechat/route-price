@@ -95,7 +95,7 @@ internal fun HistoryScreen(
             CenterAlignedTopAppBar(
                 title = { Text("Histórico") },
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "Voltar") } },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
             )
         },
         snackbarHost = { SnackbarHost(snackbar) },
